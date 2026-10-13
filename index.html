@@ -239,6 +239,7 @@ header nav a:hover{color:var(--accent);text-decoration:underline;text-underline-
    near-invisible against its own background. */
 .tab:not([aria-selected="true"]):hover{border-color:var(--accent);color:var(--accent)}
 .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:760px){.tabs{display:flex;flex-wrap:wrap;border-radius:18px}.tab{flex:1 1 auto}}
 
 .toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px;min-width:0}
 .field{display:flex;flex-direction:column;gap:5px;min-width:0}
@@ -284,6 +285,7 @@ select.ui:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
    it a "rank-bar na pos" row would lose its not-published hatch to a solid fill. */
 .compare-strip .rank-row[aria-current="false"] .rank-bar.pos:not(.na){background:#007C92}
 .compare-strip .rank-row[aria-current="true"]  .rank-bar.pos:not(.na){background:#8C1515}
+.compare-strip .rank-row[aria-current="true"]  .rank-bar.neg:not(.na){background:#8C1515}
 .rank-val{position:absolute;font-size:0.85rem;font-weight:700;color:var(--ink);
   font-variant-numeric:tabular-nums;white-space:nowrap}
 @media (max-width:620px){.rank-row{grid-template-columns:1fr;gap:4px}}
@@ -599,8 +601,9 @@ select.ui.small{font-size:0.85rem;padding:6px 28px 6px 10px}
     
 
     <div class="tabs" role="tablist" aria-label="Model results view">
-      <button class="tab" id="tab-single" role="tab" aria-selected="true" aria-controls="panel-results">Individual policies</button>
-      <button class="tab" id="tab-combo" role="tab" aria-selected="false" aria-controls="panel-results">Policy combinations</button>
+      <button class="tab" id="tab-single"   role="tab" aria-selected="true"  aria-controls="panel-results">Individual policies</button>
+      <button class="tab" id="tab-labor"    role="tab" aria-selected="false" aria-controls="panel-results">Demand policies + wage subsidy</button>
+      <button class="tab" id="tab-nonlabor" role="tab" aria-selected="false" aria-controls="panel-results">Demand policies + non-labor cost reduction</button>
     </div>
 
     <div id="panel-results" role="tabpanel" aria-labelledby="tab-single">
@@ -647,7 +650,7 @@ select.ui.small{font-size:0.85rem;padding:6px 28px 6px 10px}
         <div class="chart-grid">
           <div class="chart-card">
             <h4>Where children are cared for</h4>
-            <p class="note">Change in each arrangement's share of child slots, vs. the baseline equilibrium</p>
+            <p class="note">Change in the share of children in each type of care</p>
             <div class="dbars" id="c-care"></div>
             <div class="legend">
               <span class="item"><span class="sw" style="background:var(--div-pos)"></span>Share rises</span>
@@ -657,7 +660,7 @@ select.ui.small{font-size:0.85rem;padding:6px 28px 6px 10px}
 
           <div class="chart-card">
             <h4>Maternal employment</h4>
-            <p class="note">Change in mothers' work status, share of households, vs. baseline</p>
+            <p class="note">Change in the share of mothers in each work status</p>
             <div class="dbars" id="c-emp"></div>
             <div class="legend">
               <span class="item"><span class="sw" style="background:var(--div-pos)"></span>Share rises</span>
@@ -687,14 +690,15 @@ select.ui.small{font-size:0.85rem;padding:6px 28px 6px 10px}
 
           <div class="chart-card span">
             <h4>Out-of-pocket spending by family income</h4>
-            <p class="note">Annual household spending on childcare, by baseline household income relative to the national median income for the family's size ($83,927 for 2 people, $103,674 for 3, $123,422 for 4)</p>
+            <p class="note">Annual household spending, by income relative to the national median for the family's size</p>
             <div class="gwrap"><div class="gchart" id="c-inc"></div></div>
             <div class="legend" id="l-inc"></div>
+            <p class="tiny" style="margin-top:8px">National median income: $83,927 for 2 people, $103,674 for 3, $123,422 for 4.</p>
           </div>
 
           <div class="chart-card">
-            <h4>Childcare wages</h4>
-            <p class="note">Equilibrium annual wage, by worker education</p>
+            <h4>Childcare teacher wages</h4>
+            <p class="note">Annual wage, by education</p>
             <div class="gwrap"><div class="gchart" id="c-wage"></div></div>
             <div class="legend">
               <span class="item"><span class="sw" style="background:#33AEC3"></span>No bachelor's degree</span>
@@ -704,7 +708,7 @@ select.ui.small{font-size:0.85rem;padding:6px 28px 6px 10px}
 
           <div class="chart-card">
             <h4>Childcare jobs</h4>
-            <p class="note">Full-time-equivalent workers supported in the sector</p>
+            <p class="note">Full-time-equivalent workers, by education</p>
             <div class="gwrap"><div class="gchart" id="c-fte"></div></div>
             <div class="legend">
               <span class="item"><span class="sw" style="background:#33AEC3"></span>No bachelor's degree</span>
@@ -714,7 +718,7 @@ select.ui.small{font-size:0.85rem;padding:6px 28px 6px 10px}
 
           <div class="chart-card">
             <h4>Child poverty</h4>
-            <p class="note">Children under 5, and 5-year-olds not yet in kindergarten, living in poverty under the Supplemental Poverty Measure</p>
+            <p class="note">Children not yet in kindergarten living in poverty (Supplemental Poverty Measure)</p>
             <div class="detail-stats" id="pov-stats"></div>
             <div class="gwrap short"><div class="gchart tight" id="c-pov"></div></div>
             <div class="legend">
@@ -725,7 +729,7 @@ select.ui.small{font-size:0.85rem;padding:6px 28px 6px 10px}
 
           <div class="chart-card earn">
             <h4>Adult earnings gain</h4>
-            <p class="note">Projected gain in earnings as adults for children aged 3&ndash;5 today, from the formal care the policy adds</p>
+            <p class="note">Projected gain in adult earnings for children aged 3&ndash;5 today, from added formal care</p>
             <div class="detail-stats" id="earn-stats"></div>
             <div class="erange" id="c-earn"></div>
             <p class="tiny" id="earn-note" style="margin-top:12px"></p>
@@ -774,7 +778,7 @@ var BASE = {
   emp:{ft:41.78, pt:19.29, none:38.93},
   mkt:{privC:14848, pubC:14716, home:11022},
   oop:{privC:14296, pubC:0, home:10423},
-  oopInc:[5565,6054,7894,7558],
+  oopInc:[5565,6054,7887],
   wage:{noba:34944, ba:50357},
   fte:{noba:752382, ba:319234},
   govTotal:21.00,
@@ -789,7 +793,7 @@ var POLICIES = [
     emp:{ft:47.20, pt:23.21, none:29.59},
     mkt:{privC:18378, pubC:18111, home:13550},
     oop:{privC:7178, pubC:0, home:6999},
-    oopInc:[2373,5150,8078,6126],
+    oopInc:[2373,5150,8037],
     wage:{noba:43777, ba:72448}, fte:{noba:1277666, ba:489444},
     govTotal:92.39, addl:71.39, net:66.11,
     pov:{rate:13.132, chg:-4.693, net:-838.674, out:839.173, inn:0.499},
@@ -803,7 +807,7 @@ var POLICIES = [
     emp:{ft:49.65, pt:23.14, none:27.21},
     mkt:{privC:18580, pubC:18308, home:13683},
     oop:{privC:5413, pubC:0, home:6420},
-    oopInc:[1727,2577,7279,4531],
+    oopInc:[1727,2577,7221],
     wage:{noba:44044, ba:74261}, fte:{noba:1296528, ba:504030},
     govTotal:110.63, addl:89.63, net:83.44,
     pov:{rate:13.006, chg:-4.818, net:-861.123, out:861.290, inn:0.167},
@@ -817,7 +821,7 @@ var POLICIES = [
     emp:{ft:57.81, pt:19.77, none:22.43},
     mkt:{privC:21440, pubC:21068, home:15703},
     oop:{privC:1761, pubC:0, home:1852},
-    oopInc:[1697,2384,2590,2095],
+    oopInc:[1697,2384,2579],
     wage:{noba:50605, ba:93540}, fte:{noba:1794677, ba:660315},
     govTotal:206.65, addl:185.64, net:159.67,
     pov:{rate:12.964, chg:-4.861, net:-868.686, out:868.790, inn:0.103},
@@ -831,7 +835,7 @@ var POLICIES = [
     emp:{ft:44.55, pt:20.74, none:34.71},
     mkt:{privC:15403, pubC:15252, home:11416},
     oop:{privC:12753, pubC:0, home:9223},
-    oopInc:[4775,5410,7678,7323],
+    oopInc:[4775,5410,7671],
     wage:{noba:36251, ba:54026}, fte:{noba:819515, ba:346508},
     govTotal:35.84, addl:14.83, net:11.34,
     pov:{rate:16.168, chg:-1.656, net:-295.996, out:301.804, inn:5.808},
@@ -845,7 +849,7 @@ var POLICIES = [
     emp:{ft:42.04, pt:19.23, none:38.73},
     mkt:{privC:14342, pubC:14919, home:11175},
     oop:{privC:13791, pubC:0, home:10576},
-    oopInc:[5625,6103,7905,7611],
+    oopInc:[5625,6103,7899],
     wage:{noba:35510, ba:51590}, fte:{noba:781790, ba:328589},
     govTotal:23.59, addl:2.59, net:2.25,
     pov:{rate:17.800, chg:-0.025, net:-4.430, out:8.239, inn:3.809},
@@ -859,7 +863,7 @@ var POLICIES = [
     emp:{ft:42.11, pt:19.22, none:38.68},
     mkt:{privC:14268, pubC:14049, home:10598},
     oop:{privC:13717, pubC:0, home:10005},
-    oopInc:[5617,6083,7834,7508],
+    oopInc:[5617,6083,7827],
     wage:{noba:35364, ba:51931}, fte:{noba:773073, ba:330729},
     govTotal:null, addl:null, net:null,
     pov:{rate:17.788, chg:-0.036, net:-6.474, out:10.844, inn:4.369},
@@ -873,7 +877,7 @@ var POLICIES = [
     emp:{ft:41.04, pt:19.34, none:39.62},
     mkt:{privC:14819, pubC:14689, home:11002},
     oop:{privC:14272, pubC:0, home:10408},
-    oopInc:[5557,6040,7876,7552],
+    oopInc:[5557,6040,7869],
     wage:{noba:34878, ba:50164}, fte:{noba:749515, ba:317956},
     govTotal:188.43, addl:167.43, net:168.62,
     pov:{rate:10.185, chg:-7.640, net:-1365.350, out:1367.794, inn:2.444},
@@ -887,7 +891,7 @@ var POLICIES = [
     emp:{ft:41.65, pt:19.30, none:39.05},
     mkt:{privC:14848, pubC:14716, home:11022},
     oop:{privC:14297, pubC:0, home:10424},
-    oopInc:[5562,6051,7891,7557],
+    oopInc:[5562,6051,7884],
     wage:{noba:34944, ba:50357}, fte:{noba:751635, ba:318941},
     govTotal:47.73, addl:26.72, net:26.92,
     pov:{rate:16.186, chg:-1.639, net:-292.898, out:294.484, inn:1.587},
@@ -897,13 +901,13 @@ var POLICIES = [
 
 var COMBOS = [
   { id:"annual_cap__labor_3250", parts:["annual_cap","labor_3250"],
-    name:"7% of income cap &times; Wage subsidy",
-    short:"7% of income cap × Wage subsidy",
+    name:"7% of income cap + Wage subsidy",
+    short:"7% of income cap + Wage subsidy",
     care:{privC:39.76, pubC:5.71, home:3.69, nonrel:15.15, rel:14.57, mat:21.13},
     emp:{ft:47.14, pt:23.16, none:29.70},
     mkt:{privC:17689, pubC:18137, home:13569},
     oop:{privC:7186, pubC:0, home:7001},
-    oopInc:[2381,5157,8071,6139],
+    oopInc:[2381,5157,8030],
     wage:{noba:43832, ba:72646}, fte:{noba:1281377, ba:490970},
     govTotal:92.93, addl:71.92, net:66.88,
     pov:{rate:13.143, chg:-4.682, net:-836.758, out:837.258, inn:0.500},
@@ -911,13 +915,13 @@ var COMBOS = [
     rep:{formal:15.63, mat:9.23, mktPct:19.9, oopPct:-49.9, wagePct:32.1, perFormal:10.80, perWork:28.48} },
 
   { id:"annual_cap__nonlabor_20", parts:["annual_cap","nonlabor_20"],
-    name:"7% of income cap &times; Non-labor cost reduction",
-    short:"7% of income cap × Non-labor cost reduction",
+    name:"7% of income cap + Non-labor cost reduction",
+    short:"7% of income cap + Non-labor cost reduction",
     care:{privC:39.74, pubC:5.68, home:3.80, nonrel:15.12, rel:14.53, mat:21.13},
     emp:{ft:47.19, pt:23.10, none:29.71},
     mkt:{privC:17625, pubC:17275, home:13005},
     oop:{privC:7157, pubC:0, home:6935},
-    oopInc:[2381,5153,8053,6135],
+    oopInc:[2381,5153,8012],
     wage:{noba:43838, ba:72766}, fte:{noba:1281751, ba:491915},
     govTotal:93.19, addl:72.19, net:67.06,
     pov:{rate:13.145, chg:-4.679, net:-836.284, out:836.783, inn:0.500},
@@ -925,13 +929,13 @@ var COMBOS = [
     rep:{formal:15.69, mat:9.23, mktPct:19.3, oopPct:-50.1, wagePct:32.2, perFormal:10.78, perWork:28.47} },
 
   { id:"targeted_cap__labor_3250", parts:["targeted_cap","labor_3250"],
-    name:"$10/day (targeted) &times; Wage subsidy",
-    short:"$10/day (targeted) × Wage subsidy",
+    name:"$10/day (targeted) + Wage subsidy",
+    short:"$10/day (targeted) + Wage subsidy",
     care:{privC:41.45, pubC:5.55, home:3.76, nonrel:15.28, rel:14.80, mat:19.17},
     emp:{ft:49.74, pt:23.03, none:27.23},
     mkt:{privC:17951, pubC:18394, home:13746},
     oop:{privC:5444, pubC:0, home:6357},
-    oopInc:[1734,2592,7373,4618],
+    oopInc:[1734,2592,7315],
     wage:{noba:44246, ba:74856}, fte:{noba:1310644, ba:508813},
     govTotal:112.10, addl:91.09, net:84.75,
     pov:{rate:13.015, chg:-4.810, net:-859.544, out:859.705, inn:0.161},
@@ -939,13 +943,13 @@ var COMBOS = [
     rep:{formal:17.23, mat:11.71, mktPct:21.7, oopPct:-61.5, wagePct:34.5, perFormal:12.56, perWork:26.99} },
 
   { id:"targeted_cap__nonlabor_20", parts:["targeted_cap","nonlabor_20"],
-    name:"$10/day (targeted) &times; Non-labor cost reduction",
-    short:"$10/day (targeted) × Non-labor cost reduction",
+    name:"$10/day (targeted) + Non-labor cost reduction",
+    short:"$10/day (targeted) + Non-labor cost reduction",
     care:{privC:41.42, pubC:5.51, home:3.89, nonrel:15.24, rel:14.77, mat:19.18},
     emp:{ft:49.78, pt:23.00, none:27.22},
     mkt:{privC:17884, pubC:17528, home:13178},
     oop:{privC:5401, pubC:0, home:6319},
-    oopInc:[1735,2588,7341,4561],
+    oopInc:[1735,2588,7282],
     wage:{noba:44219, ba:75005}, fte:{noba:1308682, ba:509986},
     govTotal:112.35, addl:91.34, net:84.93,
     pov:{rate:13.018, chg:-4.807, net:-859.065, out:859.242, inn:0.177},
@@ -953,13 +957,13 @@ var COMBOS = [
     rep:{formal:17.29, mat:11.71, mktPct:20.9, oopPct:-61.7, wagePct:34.6, perFormal:12.52, perWork:27.00} },
 
   { id:"universal_cap__labor_3250", parts:["universal_cap","labor_3250"],
-    name:"$10/day (universal) &times; Wage subsidy",
-    short:"$10/day (universal) × Wage subsidy",
+    name:"$10/day (universal) + Wage subsidy",
+    short:"$10/day (universal) + Wage subsidy",
     care:{privC:55.47, pubC:3.98, home:4.53, nonrel:8.99, rel:8.76, mat:18.27},
     emp:{ft:57.77, pt:19.75, none:22.47},
     mkt:{privC:20714, pubC:21059, home:15697},
     oop:{privC:1771, pubC:0, home:1864},
-    oopInc:[1703,2392,2595,2097],
+    oopInc:[1703,2392,2585],
     wage:{noba:50586, ba:93474}, fte:{noba:1794724, ba:660329},
     govTotal:206.48, addl:185.47, net:159.61,
     pov:{rate:12.972, chg:-4.853, net:-867.325, out:867.428, inn:0.103},
@@ -967,13 +971,13 @@ var COMBOS = [
     rep:{formal:30.44, mat:16.46, mktPct:40.4, oopPct:-87.6, wagePct:58.9, perFormal:13.01, perWork:31.45} },
 
   { id:"universal_cap__nonlabor_20", parts:["universal_cap","nonlabor_20"],
-    name:"$10/day (universal) &times; Non-labor cost reduction",
-    short:"$10/day (universal) × Non-labor cost reduction",
+    name:"$10/day (universal) + Non-labor cost reduction",
+    short:"$10/day (universal) + Non-labor cost reduction",
     care:{privC:55.46, pubC:3.98, home:4.53, nonrel:8.99, rel:8.76, mat:18.28},
     emp:{ft:57.76, pt:19.75, none:22.49},
     mkt:{privC:20639, pubC:20186, home:15126},
     oop:{privC:1772, pubC:0, home:1866},
-    oopInc:[1704,2391,2597,2096],
+    oopInc:[1704,2391,2586],
     wage:{noba:50585, ba:93473}, fte:{noba:1794581, ba:660314},
     govTotal:206.45, addl:185.45, net:159.61,
     pov:{rate:12.974, chg:-4.851, net:-866.914, out:867.017, inn:0.103},
@@ -981,13 +985,13 @@ var COMBOS = [
     rep:{formal:30.44, mat:16.45, mktPct:40.2, oopPct:-87.5, wagePct:58.9, perFormal:13.01, perWork:31.47} },
 
   { id:"cash12k__labor_3250", parts:["cash12k","labor_3250"],
-    name:"$12k per household &times; Wage subsidy",
-    short:"$12k per household × Wage subsidy",
+    name:"$12k per household + Wage subsidy",
+    short:"$12k per household + Wage subsidy",
     care:{privC:23.34, pubC:8.11, home:2.91, nonrel:18.87, rel:17.75, mat:29.02},
     emp:{ft:41.30, pt:19.28, none:39.42},
     mkt:{privC:14316, pubC:14893, home:11157},
     oop:{privC:13769, pubC:0, home:10563},
-    oopInc:[5616,6088,7886,7603],
+    oopInc:[5616,6088,7880],
     wage:{noba:35451, ba:51409}, fte:{noba:778640, ba:327217},
     govTotal:191.01, addl:170.01, net:170.87,
     pov:{rate:10.156, chg:-7.669, net:-1370.513, out:1372.100, inn:1.587},
@@ -995,13 +999,13 @@ var COMBOS = [
     rep:{formal:0.84, mat:-0.49, mktPct:-2.2, oopPct:-3.3, wagePct:1.7, perFormal:591.75, perWork:null} },
 
   { id:"cash12k__nonlabor_20", parts:["cash12k","nonlabor_20"],
-    name:"$12k per household &times; Non-labor cost reduction",
-    short:"$12k per household × Non-labor cost reduction",
+    name:"$12k per household + Non-labor cost reduction",
+    short:"$12k per household + Non-labor cost reduction",
     care:{privC:23.28, pubC:8.01, home:3.15, nonrel:18.83, rel:17.74, mat:28.99},
     emp:{ft:41.37, pt:19.27, none:39.36},
     mkt:{privC:14240, pubC:14022, home:10578},
     oop:{privC:13694, pubC:0, home:9991},
-    oopInc:[5608,6069,7815,7502],
+    oopInc:[5608,6069,7808],
     wage:{noba:35303, ba:51744}, fte:{noba:770017, ba:329365},
     govTotal:191.36, addl:170.36, net:171.12,
     pov:{rate:10.146, chg:-7.679, net:-1372.332, out:1373.796, inn:1.464},
@@ -1009,13 +1013,13 @@ var COMBOS = [
     rep:{formal:0.91, mat:-0.43, mktPct:-4.3, oopPct:-4.3, wagePct:1.7, perFormal:510.75, perWork:null} },
 
   { id:"ca1500_u5__labor_3250", parts:["ca1500_u5","labor_3250"],
-    name:"$1.5k per child under 5 &times; Wage subsidy",
-    short:"$1.5k per child under 5 × Wage subsidy",
+    name:"$1.5k per child under 5 + Wage subsidy",
+    short:"$1.5k per child under 5 + Wage subsidy",
     care:{privC:23.39, pubC:8.12, home:2.92, nonrel:18.98, rel:17.89, mat:28.69},
     emp:{ft:41.92, pt:19.23, none:38.85},
     mkt:{privC:14338, pubC:14915, home:11172},
     oop:{privC:13788, pubC:0, home:10574},
-    oopInc:[5623,6100,7902,7610],
+    oopInc:[5623,6100,7896],
     wage:{noba:35500, ba:51562}, fte:{noba:781265, ba:328375},
     govTotal:50.30, addl:29.30, net:29.16,
     pov:{rate:16.161, chg:-1.664, net:-297.359, out:298.849, inn:1.490},
@@ -1023,13 +1027,13 @@ var COMBOS = [
     rep:{formal:0.91, mat:0.09, mktPct:-2.1, oopPct:-3.2, wagePct:1.9, perFormal:88.92, perWork:843.26} },
 
   { id:"ca1500_u5__nonlabor_20", parts:["ca1500_u5","nonlabor_20"],
-    name:"$1.5k per child under 5 &times; Non-labor cost reduction",
-    short:"$1.5k per child under 5 × Non-labor cost reduction",
+    name:"$1.5k per child under 5 + Non-labor cost reduction",
+    short:"$1.5k per child under 5 + Non-labor cost reduction",
     care:{privC:23.33, pubC:8.02, home:3.16, nonrel:18.95, rel:17.88, mat:28.66},
     emp:{ft:41.99, pt:19.22, none:38.79},
     mkt:{privC:14263, pubC:14044, home:10595},
     oop:{privC:13713, pubC:0, home:10003},
-    oopInc:[5614,6081,7831,7508],
+    oopInc:[5614,6081,7824],
     wage:{noba:35354, ba:51902}, fte:{noba:772564, ba:330516},
     govTotal:50.66, addl:29.65, net:29.42,
     pov:{rate:16.150, chg:-1.675, net:-299.360, out:301.207, inn:1.848},
@@ -1057,9 +1061,10 @@ var BY_ID = {};
 POLICIES.forEach(function(p){ BY_ID[p.id] = p; });
 COMBOS.forEach(function(c){
   c.kind = "Combination";
-  c.desc = "Both policies are solved in a single equilibrium rather than applied one after the other, "+
-           "so the subsidies and transfers, the CDCTC base, the provider price and the childcare wage all adjust "+
-           "to each other at once. The result does not depend on the order the policies are applied in.";
+  c.listName = BY_ID[c.parts[0]].short;            /* the tab already names the supply policy */
+  c.listKind = "+ " + BY_ID[c.parts[1]].short;
+  c.desc = "The two policies are solved together in one equilibrium, so prices, teacher wages, "+
+           "subsidies and the CDCTC adjust to each other at once.";
   BY_ID[c.id] = c;
 });
 
@@ -1120,17 +1125,17 @@ function selectionFor(run){
 
 var METRICS = [
   { key:"formal",    label:"Formal care share",          unit:"pp",  fmt:function(v){return sgn(v,2)+" pp";},
-    note:"Change in the combined private-centre, public-centre and licensed home-based share of child slots." },
+    note:"Change in the share of children in formal care (centres and licensed home-based care)." },
   { key:"mat",       label:"Maternal employment",        unit:"pp",  fmt:function(v){return sgn(v,2)+" pp";},
-    note:"Change in the share of households where the mother works full- or part-time." },
+    note:"Change in the share of mothers working full- or part-time." },
   { key:"oopPct",    label:"Family out-of-pocket price", unit:"%",   fmt:function(v){return sgn(v,1)+"%";},
-    note:"Percent change in the weighted-average out-of-pocket full-time-equivalent annual price families pay." },
+    note:"Percent change in the average annual price families pay." },
   { key:"mktPct",    label:"Market (provider) price",    unit:"%",   fmt:function(v){return sgn(v,1)+"%";},
-    note:"Percent change in the weighted-average annual provider price." },
-  { key:"wagePct",   label:"Childcare wage",            unit:"%",   fmt:function(v){return sgn(v,1)+"%";},
-    note:"Percent change in the weighted-average childcare worker wage." },
-  { key:"povK",      label:"Child poverty outcomes", unit:"K", fmt:function(v){return kids(v);},
-    note:"Net reduction in the number of young children in poverty under the Supplemental Poverty Measure (SPM), ACS 2023 families at each policy's equilibrium. Today about " +
+    note:"Percent change in the average annual price providers charge." },
+  { key:"wagePct",   label:"Childcare teacher wage",    unit:"%",   fmt:function(v){return sgn(v,1)+"%";},
+    note:"Percent change in the average childcare teacher wage." },
+  { key:"povPct",    label:"Child poverty outcomes", unit:"%", fmt:function(v){return sgn(v,1)+"%";},
+    note:"Percent change in the number of children in poverty (Supplemental Poverty Measure). Today " +
          kids(BASE.pov.poor) + " children (" + BASE.pov.rate.toFixed(1) + "%) are in poverty." },
   { key:"earn",      label:"Adult earnings gain", unit:"%", fmt:function(v){return sgn(v,2)+"%";},
     show:function(o){ return earnRange(o.lt); },
@@ -1138,7 +1143,7 @@ var METRICS = [
     na:"not projected",
     naHead:"Not projected for cash transfers.",
     naNote:"This projection captures the effect of increased formal childcare on children’s future earnings. Cash transfers may also improve future earnings by reducing childhood poverty, but our model does not estimate that pathway.",
-    note:"Projected gain in earnings as adults for children aged 3–5 today, from the formal care each policy adds (Chetty et al. 2011). Each bar spans the projected range." }
+    note:"Projected gain in adult earnings for children aged 3–5 today, from the formal care each policy adds (Chetty et al. 2011). Bars show the low-to-high range." }
 ];
 
 /* ---------------------------- helpers ---------------------------- */
@@ -1179,7 +1184,7 @@ function priceBaseOf(o){ return o.priceBase || BASE; }
 function metricVal(o, key){
   var r = o.rep || {};
   if (key === "net") return o.net;
-  if (key === "povK") return o.pov ? { v:-o.pov.net, calc:false } : null;
+  if (key === "povPct") return o.pov ? { v:100 * o.pov.net / BASE.pov.poor, calc:false } : null;
   if (key === "earn") return o.lt  ? { v:(o.lt.lo + o.lt.hi)/2, calc:false } : null;
   if (r[key] !== undefined && r[key] !== null) return { v:r[key], calc:false };
   if (key === "formal") return { v: formalOf(o) - formalOf(BASE), calc:true };
@@ -1349,12 +1354,16 @@ function grouped(elId, cols, series, fmt, opts){
 }
 
 /* ============================ ALL-RUNS VIEW ============================ */
-var mode = "single";       /* "single" | "combo" */
+var mode = "single";       /* "single" | "labor" | "nonlabor" */
+var MODE_SUPPLY = { labor:"labor_3250", nonlabor:"nonlabor_20" };
 var selectedId = "universal_cap";
 var metricKey = "formal";
 var rankLayout = function(){};   /* set by renderRank; re-run on resize */
 
-function currentList(){ return mode === "single" ? POLICIES : COMBOS; }
+function currentList(){
+  if (mode === "single") return POLICIES;
+  return COMBOS.filter(function(c){ return c.parts[1] === MODE_SUPPLY[mode]; });
+}
 
 function renderRank(){
   var list = currentList();
@@ -1391,7 +1400,7 @@ function renderRank(){
     btn.addEventListener("click", function(){ showRun(r.o.id); });
 
     var nm = document.createElement("span"); nm.className = "rank-name";
-    nm.appendChild(document.createTextNode(r.o.short || stripTags(r.o.name)));
+    nm.appendChild(document.createTextNode(r.o.listName || r.o.short || stripTags(r.o.name)));
     var kd = document.createElement("span"); kd.className = "kind"; kd.textContent = r.o.kind;
     nm.appendChild(kd);
 
@@ -1496,7 +1505,7 @@ function renderAllTable(){
   t.appendChild(cap);
 
   var heads = ["Run","Formal care (pp)","Maternal empl. (pp)","Market price (%)","Family OOP price (%)",
-               "Wage (%)","Net fiscal cost ($bn)","Net $ / extra formal-care hr","Net $ / extra work hr",
+               "Teacher wage (%)","Net fiscal cost ($bn)","Net $ / extra formal-care hr","Net $ / extra work hr",
                "Children lifted out of poverty (thousands)","Adult earnings gain (%)"];
 
   var thead = document.createElement("thead"); var hr = document.createElement("tr");
@@ -1566,8 +1575,8 @@ function renderDetail(){
       {v:matEmpOf(BASE).toFixed(1)+"%",     l:"Mothers in paid work today"},
       {v:usd(BASE.oop.privC),               l:"Private-centre price families pay today"},
       {v:usd(BASE.mkt.privC),               l:"Private-centre price providers charge today"},
-      {v:usd(BASE.wage.noba),               l:"Annual wage, worker without a BA"},
-      {v:usd(BASE.wage.ba),                 l:"Annual wage, worker with a BA"},
+      {v:usd(BASE.wage.noba),               l:"Teacher wage, no bachelor's degree"},
+      {v:usd(BASE.wage.ba),                 l:"Teacher wage, bachelor's degree"},
       {v:(BASE.fte.noba+BASE.fte.ba).toLocaleString("en-US"), l:"Full-time-equivalent childcare jobs"}
     ];
   } else {
@@ -1580,7 +1589,7 @@ function renderDetail(){
       {v:d2(matM.v," pp")+(matM.calc?" \u2020":""),       l:"Share of mothers working"},
       {v:d1(r.oopPct,"%"),          l:"Family out-of-pocket costs"},
       {v:d1(r.mktPct,"%"),          l:"Market price"},
-      {v:d1(r.wagePct,"%"),         l:"Childcare worker wage"}
+      {v:d1(r.wagePct,"%"),         l:"Childcare teacher wage"}
     ];
   }
   tiles.forEach(function(st){
@@ -1640,22 +1649,19 @@ function renderDetail(){
   }
   grouped("c-mkt", priceCols("mkt"), priceSeries, usdK, {pct:true});
   grouped("c-oop", priceCols("oop"), priceSeries, usdK, {pct:true});
-  var priceNoteText =
-    "Annual full-time price per child, 2024 dollars." +
-    (o.priceBasis === "toddler"
-      ? "  Toddler (18–41 months) age row — this run is published on that basis, so it is compared against the matching toddler baseline."
-      : "  Weighted average across infant, toddler and preschool ages.");
+  var priceNoteText = o.priceBasis === "toddler"
+    ? "Annual full-time price per child, toddlers (18–41 months), 2024 dollars"
+    : "Annual full-time price per child, averaged across ages, 2024 dollars";
   document.getElementById("price-note-mkt").textContent = priceNoteText;
   document.getElementById("price-note-oop").textContent = priceNoteText;
 
   /* out-of-pocket by income */
   var incSeries = [
     { key:"q0", label:"0–85% of NMI",   color:"var(--ord-1)" },
-    { key:"q1", label:"86–150%",        color:"var(--ord-2)" },
-    { key:"q2", label:"151–250%",       color:"var(--ord-3)" },
-    { key:"q3", label:"251%+",               color:"var(--ord-4)" }
+    { key:"q1", label:"86–150%",        color:"var(--ord-3)" },
+    { key:"q2", label:"151%+",          color:"var(--ord-4)" }
   ];
-  function toObj(a){ return { q0:a[0], q1:a[1], q2:a[2], q3:a[3] }; }
+  function toObj(a){ return { q0:a[0], q1:a[1], q2:a[2] }; }
   grouped("c-inc", scen.map(function(s){
     return { label:s.label, sublabel:s.sublabel,
              values: toObj(s.src ? s.src.oopInc : BASE.oopInc),
@@ -1788,7 +1794,7 @@ function renderDetailTable(o, scen, isCombo){
   });
 
   group("Annual family out-of-pocket spending by income, $");
-  ["0–85% of NMI","86–150%","151–250%","251%+"].forEach(function(lbl,i){
+  ["0–85% of NMI","86–150%","151%+"].forEach(function(lbl,i){
     row(lbl, function(s){ return (s.src ? s.src.oopInc : BASE.oopInc)[i]; }, usd);
   });
 
@@ -1859,9 +1865,10 @@ function renderPolicyList(){
     var n = document.createElement("span"); n.className = "pl-n"; n.textContent = (i+1);
     var w = document.createElement("span");
     var nm = document.createElement("span"); nm.className = "pl-name";
-    nm.textContent = o.short || stripTags(o.name);
-    var kd = document.createElement("span"); kd.className = "pl-kind"; kd.textContent = o.kind || "";
-    w.appendChild(nm); if (o.kind) w.appendChild(kd);
+    nm.textContent = o.listName || o.short || stripTags(o.name);
+    var kindText = o.listKind || o.kind || "";
+    var kd = document.createElement("span"); kd.className = "pl-kind"; kd.textContent = kindText;
+    w.appendChild(nm); if (kindText) w.appendChild(kd);
     b.appendChild(n); b.appendChild(w);
     b.addEventListener("click", function(){ showRun(o.id); });
     li.appendChild(b); host.appendChild(li);
@@ -1892,18 +1899,26 @@ document.addEventListener("keydown", function(e){
   if (e.key === "ArrowRight" || e.key === "ArrowDown") { galGo(1);  e.preventDefault(); }
 });
 
+/* Switching tabs keeps the same demand policy selected where it exists, so a
+   policy can be compared on its own and with each supply-side policy. */
+function demandOf(id){ var o = BY_ID[id]; return o && o.parts ? o.parts[0] : id; }
 function setMode(next){
   if (mode === next) return;
+  var d = demandOf(selectedId);
   mode = next;
-  document.getElementById("tab-single").setAttribute("aria-selected", String(mode === "single"));
-  document.getElementById("tab-combo").setAttribute("aria-selected", String(mode === "combo"));
-  document.getElementById("panel-results").setAttribute("aria-labelledby", mode === "single" ? "tab-single" : "tab-combo");
-  galIdx = 0;
-  selectedId = galList()[0].id;
+  ["single", "labor", "nonlabor"].forEach(function(k){
+    document.getElementById("tab-" + k).setAttribute("aria-selected", String(mode === k));
+  });
+  document.getElementById("panel-results").setAttribute("aria-labelledby", "tab-" + mode);
+  var L = galList();
+  var keep = L.filter(function(o){ return demandOf(o.id) === d; })[0] || L[0];
+  galIdx = L.indexOf(keep);
+  selectedId = keep.id;
   renderAll();
 }
-document.getElementById("tab-single").addEventListener("click", function(){ setMode("single"); });
-document.getElementById("tab-combo").addEventListener("click", function(){ setMode("combo"); });
+["single", "labor", "nonlabor"].forEach(function(k){
+  document.getElementById("tab-" + k).addEventListener("click", function(){ setMode(k); });
+});
 
 function wireToggle(btnId, targetId, showLabel, hideLabel){
   var btn = document.getElementById(btnId), t = document.getElementById(targetId);
