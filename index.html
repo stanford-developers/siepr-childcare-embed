@@ -1129,9 +1129,9 @@ var METRICS = [
   { key:"mat",       label:"Maternal employment",        unit:"pp",  fmt:function(v){return sgn(v,2)+" pp";},
     note:"Change in the share of mothers working full- or part-time." },
   { key:"oopPct",    label:"Family out-of-pocket price", unit:"%",   fmt:function(v){return sgn(v,1)+"%";},
-    note:"Percent change in the average annual price families pay." },
+    note:"Percent change in the average annual full-time price families pay out of pocket for formal care (centers and licensed home-based care), averaged across care types and ages by hours of care." },
   { key:"mktPct",    label:"Market (provider) price",    unit:"%",   fmt:function(v){return sgn(v,1)+"%";},
-    note:"Percent change in the average annual price providers charge." },
+    note:"Percent change in the average annual full-time price providers charge for formal care, averaged across care types and ages by hours of care." },
   { key:"wagePct",   label:"Childcare teacher wage",    unit:"%",   fmt:function(v){return sgn(v,1)+"%";},
     note:"Percent change in the average childcare teacher wage." },
   { key:"povPP",     label:"Child poverty",          unit:"pp", fmt:function(v){return sgn(v,2)+" pp";},
@@ -1600,7 +1600,7 @@ function renderDetail(){
       {v:bn(o.net),                 l:"Net fiscal cost per year"},
       {v:d2(formalM.v," pp")+(formalM.calc?" \u2020":""), l:"Share of children in formal care"},
       {v:d2(matM.v," pp")+(matM.calc?" \u2020":""),       l:"Share of mothers working"},
-      {v:d1(r.oopPct,"%"),          l:"Family out-of-pocket costs"},
+      {v:d1(r.oopPct,"%"),          l:"Family out-of-pocket price"},
       {v:d1(r.mktPct,"%"),          l:"Market price"},
       {v:d1(r.wagePct,"%"),         l:"Childcare teacher wage"}
     ];
