@@ -722,7 +722,7 @@ select.ui.small{font-size:0.85rem;padding:6px 28px 6px 10px}
 
           <div class="chart-card">
             <h4>Child poverty</h4>
-            <p class="note">Children not yet in kindergarten living in poverty (Supplemental Poverty Measure)</p>
+            <p class="note">Children not yet in kindergarten living in poverty</p>
             <div class="detail-stats" id="pov-stats"></div>
             <div class="gwrap short"><div class="gchart tight" id="c-pov"></div></div>
           </div>
@@ -844,7 +844,7 @@ var POLICIES = [
 
   { id:"labor_3250", kind:"Supply side", short:"Wage subsidy", chartName:"Wage subsidy",
     name:"Wage subsidy",
-    desc:"The government covers $3,250 per full-time-equivalent worker at private centers, lowering their effective cost of labour for both college- and non-college-educated staff.",
+    desc:"The government covers $3,250 per full-time-equivalent worker at private centers, lowering their effective cost of labor for both college- and non-college-educated staff.",
     care:{privC:23.40, pubC:8.13, home:2.92, nonrel:19.01, rel:17.92, mat:28.62},
     emp:{ft:42.04, pt:19.23, none:38.73},
     mkt:{privC:14342, pubC:14919, home:11175},
@@ -858,7 +858,7 @@ var POLICIES = [
 
   { id:"nonlabor_20", kind:"Supply side", short:"Non-labor cost reduction", chartName:"Non-labor cost reduction",
     name:"Non-labor cost reduction",
-    desc:"Cuts providers' non-labour input costs — rent, facilities, compliance — by 20%. Modelled as a regulatory change rather than government spending, so no fiscal cost is shown.",
+    desc:"Cuts providers' non-labor input costs — rent, facilities, compliance — by 20%. Modeled as a regulatory change rather than government spending, so no fiscal cost is shown.",
     care:{privC:23.34, pubC:8.02, home:3.17, nonrel:18.97, rel:17.91, mat:28.59},
     emp:{ft:42.11, pt:19.22, none:38.68},
     mkt:{privC:14268, pubC:14049, home:10598},
@@ -1096,7 +1096,7 @@ var DEMAND_OPTIONS = [
 var SUPPLY_OPTIONS = [
   { id:NONE,           label:"No supply-side policy" },
   { id:"labor_3250",   label:"Wage subsidy — $3,250 per worker" },
-  { id:"nonlabor_20",  label:"Non-labour costs cut 20%" }
+  { id:"nonlabor_20",  label:"Non-labor costs cut 20%" }
 ];
 var MATRIX_SUPPLY = SUPPLY_OPTIONS.filter(function(o){ return !o.solo; });
 
@@ -1690,7 +1690,7 @@ function renderDetail(){
     i.appendChild(sw); i.appendChild(document.createTextNode(s.label)); linc.appendChild(i);
   });
 
-  /* labour market. c-wage and c-fte share this list, so the no-BA bars -
+  /* labor market. c-wage and c-fte share this list, so the no-BA bars -
      $34.9K/$40.1K on wages, 798K/1.10M on jobs - take #33AEC3 here. Literal,
      like priceSeries above, rather than repointing --cat-1: that token is the
      generic "series 1" and still backs .rank-bar's fallback. */
@@ -1815,7 +1815,7 @@ function renderDetailTable(o, scen, isCombo){
     row(lbl, function(s){ return (s.src ? s.src.oopInc : BASE.oopInc)[i]; }, usd);
   });
 
-  group("Childcare labour market");
+  group("Childcare labor market");
   row("Annual wage — no BA", function(s){ return (s.src ? s.src.wage : BASE.wage).noba; }, usd);
   row("Annual wage — BA",    function(s){ return (s.src ? s.src.wage : BASE.wage).ba;   }, usd);
   row("FTE workers — no BA", function(s){ return (s.src ? s.src.fte : BASE.fte).noba; },
