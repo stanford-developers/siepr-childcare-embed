@@ -351,6 +351,12 @@ table.data tr.inter td{font-style:italic;color:var(--ink-2)}
 .dtrack{position:relative;height:16px;cursor:default}
 .dtrack::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line-soft)}
 .dtrack .zero{position:absolute;top:0;bottom:0;left:50%;width:1px;background:var(--line)}
+/* the shared axis (one scale for every policy): gridlines in each row, tick labels under the rows */
+.dtrack .grid{position:absolute;top:-4px;bottom:-4px;width:1px;background:var(--line-soft)}
+.dbar-row.daxis{margin-top:-4px}
+.dticks{position:relative;height:16px;font-size:0.8rem;color:var(--muted)}
+.dticks span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+.dunit{font-size:0.8rem;color:var(--muted);text-align:right}
 .dfill{position:absolute;top:2px;height:12px;background:var(--div-pos)}
 .dfill.pos{border-radius:0 4px 4px 0}
 .dfill.neg{background:var(--div-neg);border-radius:4px 0 0 4px}
@@ -1133,14 +1139,30 @@ var EARN_NOTE = "This projection captures the effect of increased time in formal
    same change draws the same bar. */
 var ALL_RUNS = POLICIES.concat(COMBOS);
 function maxOver(f){ return [BASE].concat(ALL_RUNS).reduce(function(m, o){ return Math.max(m, f(o)); }, 0); }
-function maxChange(f, keys){
+/* The largest rise (sign = 1) or fall (sign = -1) of any run, in pp. */
+function maxSigned(f, keys, sign){
   return ALL_RUNS.reduce(function(m, o){
-    return keys.reduce(function(mm, k){ return Math.max(mm, Math.abs(f(o)[k] - f(BASE)[k])); }, m);
+    return keys.reduce(function(mm, k){ return Math.max(mm, sign * (f(o)[k] - f(BASE)[k])); }, m);
   }, 0);
 }
+/* An axis from the largest fall to the largest rise, rounded out to half a tick
+   step: the zero line sits where the data put it, so rises (most changes) get
+   most of the width. Ticks every 1, 2, 5, 10 or 20 pp, at most six of them. */
+function divScale(maxPos, maxNeg){
+  var steps = [1, 2, 5, 10, 20, 50], step = 50;
+  for (var i = 0; i < steps.length; i++) if ((maxPos + maxNeg) / steps[i] <= 6){ step = steps[i]; break; }
+  var g = step / 2;
+  var lo = maxNeg > 0 ? -Math.ceil(maxNeg / g) * g : 0, hi = maxPos > 0 ? Math.ceil(maxPos / g) * g : g;
+  var ticks = [];
+  for (var t = Math.ceil(lo / step) * step; t <= hi + 1e-9; t += step) ticks.push(t);
+  return { lo:lo, hi:hi, ticks:ticks };
+}
+var CARE_KEYS = ["privC", "pubC", "home", "nonrel", "rel", "mat"], EMP_KEYS = ["ft", "pt", "none"];
+function careOf(o){ return o.care; }
+function empOf(o){ return o.emp; }
 var SCALE = {
-  care: maxChange(function(o){ return o.care; }, ["privC", "pubC", "home", "nonrel", "rel", "mat"]),
-  emp:  maxChange(function(o){ return o.emp; }, ["ft", "pt", "none"]),
+  care: divScale(maxSigned(careOf, CARE_KEYS, 1), maxSigned(careOf, CARE_KEYS, -1)),
+  emp:  divScale(maxSigned(empOf, EMP_KEYS, 1), maxSigned(empOf, EMP_KEYS, -1)),
   mkt:  maxOver(function(o){ return Math.max(o.mkt.privC, o.mkt.home); }),
   oop:  maxOver(function(o){ return Math.max(o.oop.privC, o.oop.home); }),
   inc:  maxOver(function(o){ return Math.max.apply(null, o.oopInc); }),
@@ -1270,12 +1292,13 @@ function bindTip(el, value, label, color){
 }
 
 /* ------------------------ diverging bar rows ------------------------ */
-function diverging(elId, rows, scaleMax){
+function diverging(elId, rows, sc){
   var el = document.getElementById(elId);
   el.textContent = "";
-  var maxAbs = scaleMax || 0;          /* one scale for every run (SCALE) */
-  if (!scaleMax) rows.forEach(function(r){ maxAbs = Math.max(maxAbs, Math.abs(r.value)); });
-  maxAbs = maxAbs * 1.12 || 1;
+  if (!sc){ var m = 0; rows.forEach(function(r){ m = Math.max(m, Math.abs(r.value)); }); sc = divScale(m, m); }
+  var span = (sc.hi - sc.lo) || 1;
+  function pct(v){ return (v - sc.lo) / span * 100; }
+  var zero = pct(0);
   rows.forEach(function(r){
     var row = document.createElement("div"); row.className = "dbar-row";
 
@@ -1286,13 +1309,17 @@ function diverging(elId, rows, scaleMax){
     lab.appendChild(sub);
 
     var track = document.createElement("span"); track.className = "dtrack";
-    var zero = document.createElement("span"); zero.className = "zero"; track.appendChild(zero);
-    var w = Math.abs(r.value)/maxAbs*50;
+    sc.ticks.forEach(function(t){
+      if (t === 0) return;
+      var g = document.createElement("span"); g.className = "grid"; g.style.left = pct(t) + "%"; track.appendChild(g);
+    });
+    var zl = document.createElement("span"); zl.className = "zero"; zl.style.left = zero + "%"; track.appendChild(zl);
+    var w = Math.abs(r.value) / span * 100;
     var pos = r.value >= 0;
     var fill = document.createElement("span");
     fill.className = "dfill " + (pos ? "pos" : "neg");
     fill.style.width = Math.max(w, 0.4) + "%";
-    fill.style.left = pos ? "50%" : (50 - w) + "%";
+    fill.style.left = pos ? zero + "%" : (zero - w) + "%";
     track.appendChild(fill);
     bindTip(track, sgn(r.value,2)+" pp", r.label + " · " + r.sub.toFixed(1) + "% → " + r.now.toFixed(1) + "%",
             pos ? "var(--div-pos)" : "var(--div-neg)");
@@ -1302,6 +1329,18 @@ function diverging(elId, rows, scaleMax){
     row.appendChild(lab); row.appendChild(track); row.appendChild(val);
     el.appendChild(row);
   });
+  /* the axis under the rows, in percentage points */
+  var ax = document.createElement("div"); ax.className = "dbar-row daxis";
+  ax.appendChild(document.createElement("span"));
+  var at = document.createElement("span"); at.className = "dticks";
+  sc.ticks.forEach(function(t){
+    var s = document.createElement("span"); s.style.left = pct(t) + "%";
+    s.textContent = (t > 0 ? "+" : t < 0 ? "−" : "") + Math.abs(t);
+    at.appendChild(s);
+  });
+  ax.appendChild(at);
+  var un = document.createElement("span"); un.className = "dunit"; un.textContent = "pp"; ax.appendChild(un);
+  el.appendChild(ax);
 }
 
 /* ---------------------------- range rows ---------------------------- */
