@@ -807,7 +807,7 @@ var POLICIES = [
 
   { id:"targeted_cap", kind:"Demand side", short:"$10/day (targeted)", chartName:"$10/day (targeted)",
     name:"$10/day (targeted)",
-    desc:"Households where all parents work pay nothing for formal care if their income is at or below 85% of the national median income for their family size, and at most $10 per day per child ($2,600 a year) between 86% and 150%. Above 150%, families pay the market price.",
+    desc:"Households where all parents work pay nothing for formal care if their income is at or below 85% of the national median income for their family size, and at most $10 per day per child ($2,600 per year) between 86% and 150%. Above 150%, families pay the market price.",
     care:{privC:40.86, pubC:5.60, home:3.81, nonrel:15.52, rel:15.02, mat:19.19},
     emp:{ft:49.65, pt:23.14, none:27.21},
     mkt:{privC:18580, pubC:18308, home:13683},
@@ -821,7 +821,7 @@ var POLICIES = [
 
   { id:"universal_cap", kind:"Demand side", short:"$10/day (universal)", chartName:"$10/day (universal)",
     name:"$10/day (universal)",
-    desc:"Households where all parents work pay nothing for formal care if their income is at or below 85% of the national median income for their family size, and at most $10 per day per child ($2,600 a year) above that.",
+    desc:"Households where all parents work pay nothing for formal care if their income is at or below 85% of the national median income for their family size, and at most $10 per day per child ($2,600 per year) above that.",
     care:{privC:55.45, pubC:3.98, home:4.53, nonrel:9.00, rel:8.77, mat:18.28},
     emp:{ft:57.81, pt:19.77, none:22.43},
     mkt:{privC:21440, pubC:21068, home:15703},
@@ -849,7 +849,7 @@ var POLICIES = [
 
   { id:"cash12k", kind:"Demand side", short:"$12k per household", chartName:"$12k per household",
     name:"$12,000 per household",
-    desc:"Each household with a child under 5 receives a refundable tax credit of $12,000 a year, with no conditions on work or childcare use.",
+    desc:"Each household with a child under 5 receives a refundable tax credit of $12,000 per year, with no conditions on work or childcare use.",
     care:{privC:22.19, pubC:8.22, home:3.04, nonrel:19.24, rel:18.08, mat:29.23},
     emp:{ft:41.04, pt:19.34, none:39.62},
     mkt:{privC:14819, pubC:14689, home:11002},
@@ -863,7 +863,7 @@ var POLICIES = [
 
   { id:"ca1500_u5", kind:"Demand side", short:"$1.5k per child under 5", chartName:"$1.5k per child under 5",
     name:"$1,500 per child under 5",
-    desc:"Each household receives a refundable tax credit of $1,500 a year for each child under 5, with no conditions on work or childcare use.",
+    desc:"Each household receives a refundable tax credit of $1,500 per year for each child under 5, with no conditions on work or childcare use.",
     care:{privC:22.22, pubC:8.23, home:3.05, nonrel:19.36, rel:18.23, mat:28.91},
     emp:{ft:41.65, pt:19.30, none:39.05},
     mkt:{privC:14848, pubC:14716, home:11022},
@@ -877,7 +877,7 @@ var POLICIES = [
 
   { id:"labor_3250", kind:"Supply side", short:"Wage subsidy", chartName:"Wage subsidy",
     name:"Wage subsidy",
-    desc:"Private center-based providers receive a subsidy of $3,250 a year per full-time-equivalent teacher, lowering their cost of labor for teachers with and without a bachelor's degree.",
+    desc:"Private center-based providers receive a subsidy of $3,250 per full-time-equivalent teacher per year, lowering their cost of labor for teachers with and without a bachelor's degree.",
     care:{privC:23.40, pubC:8.13, home:2.92, nonrel:19.01, rel:17.92, mat:28.62},
     emp:{ft:42.04, pt:19.23, none:38.73},
     mkt:{privC:14342, pubC:14919, home:11175},
@@ -1182,16 +1182,16 @@ var METRICS = [
     note:"Change in the share of mothers working full- or part-time. Baseline: " + matEmpOf(BASE).toFixed(1) + "%." },
   { key:"oopPct",    label:"Family out-of-pocket price", unit:"%",   fmt:function(v){return sgn(v,1)+"%";},
     note:"Percent change in the average annual full-time price families pay out of pocket for formal care (centers and licensed home-based care), averaged across care types and ages by hours of care. Baseline: " +
-         usd(BASE.oop.privC) + " a year at private centers, " + usd(BASE.oop.home) + " at home-based providers." },
+         usd(BASE.oop.privC) + " per year at private centers, " + usd(BASE.oop.home) + " at home-based providers." },
   { key:"spendPct",  label:"Family out-of-pocket spending", unit:"%", fmt:function(v){return sgn(v,1)+"%";},
     note:"Percent change in average annual household spending on childcare, among households using non-parental care, after subsidies and tax credits. Baseline: " +
-         usd(BASE.spend) + " a year." },
+         usd(BASE.spend) + " per year." },
   { key:"mktPct",    label:"Market (provider) price",    unit:"%",   fmt:function(v){return sgn(v,1)+"%";},
     note:"Percent change in the average annual full-time price providers charge for formal care, averaged across care types and ages by hours of care. Baseline: " +
-         usd(BASE.mkt.privC) + " a year at private centers, " + usd(BASE.mkt.home) + " at home-based providers." },
+         usd(BASE.mkt.privC) + " per year at private centers, " + usd(BASE.mkt.home) + " at home-based providers." },
   { key:"wagePct",   label:"Childcare teacher wage",    unit:"%",   fmt:function(v){return sgn(v,1)+"%";},
     note:"Percent change in the average hourly wage of childcare teachers. Baseline: $" + hourly(BASE.wage.noba).toFixed(2) +
-         " an hour without a bachelor's degree, $" + hourly(BASE.wage.ba).toFixed(2) + " with one." },
+         " per hour without a bachelor's degree, $" + hourly(BASE.wage.ba).toFixed(2) + " with one." },
   { key:"jobsPct",   label:"Childcare teacher jobs",    unit:"%",   fmt:function(v){return sgn(v,1)+"%";},
     note:"Percent change in full-time-equivalent childcare teacher jobs. Baseline: " + cnt(BASE.fte.noba + BASE.fte.ba) + "." },
   { key:"povPP",     label:"Child poverty",          unit:"pp", fmt:function(v){return sgn(v,2)+" pp";},
